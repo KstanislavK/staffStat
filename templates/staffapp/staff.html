@@ -1,0 +1,51 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css">
+    <title>{{ title }}</title>
+</head>
+<body>
+<div>
+    <h3>Список действий</h3>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Количество</th>
+            <th>План</th>
+        </tr>
+        {% for item in actions %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.get_number_of_completed_action }}</td>
+                <td>{{ item.get_planed_action_amount }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+</div>
+<div>
+    <h3>Список клиентов</h3>
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Адрес</th>
+        </tr>
+        {% for item in staff.get_clients %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.phone_number }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.address }}</td>
+            </tr>
+        {%  endfor %}
+    </table>
+</div>
+</body>
+</html>
