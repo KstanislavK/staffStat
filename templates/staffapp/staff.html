@@ -12,20 +12,50 @@
 </head>
 <body>
 <div>
+<p>Имя: {{ staff.name }}</p>
+<p>Должность: {{ staff.position }}</p>
+<p>В должности с: {{ staff.appointments_date }} </p>
+
     <h3>Список действий</h3>
     <table>
         <tr>
             <th>Название</th>
             <th>Количество</th>
             <th>План</th>
+            <th>KPI</th>
         </tr>
         {% for item in actions %}
             <tr>
                 <td>{{ item.name }}</td>
-                <td>{{ item.get_number_of_completed_action }}</td>
-                <td>{{ item.get_planed_action_amount }}</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi.completed_amount }}</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi.plan_amount }}</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi.kpi|floatformat:0 }} %</td>
             </tr>
         {%  endfor %}
+    </table>
+</div>
+<div>
+    <h3>Список действий</h3>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>План</th>
+            <th>Текущий месяц</th>
+            <th>Прошлый месяц</th>
+        </tr>
+        {% for item in actions %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi.plan_amount }}</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi.completed_amount }} ({{ item.get_number_of_completed_action_and_kpi.kpi|floatformat:0 }} %)</td>
+                <td>{{ item.get_number_of_completed_action_and_kpi_prev_month.completed_amount }} ({{ item.get_number_of_completed_action_and_kpi_prev_month.kpi|floatformat:0 }} %)</td>
+            </tr>
+        {%  endfor %}
+            <tr>
+                <td colspan="2">KPI общее</td>
+                <td>{{ total_kpi_current_month|floatformat:0 }} %</td>
+                <td>{{ total_kpi_previous_month|floatformat:0 }} %</td>
+            </tr>
     </table>
 </div>
 <div>

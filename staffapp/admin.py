@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from staffapp.models import StaffList, ClientList, ActionList, CompletedActionList, PlanedTaskList
+from staffapp.models import StaffList, ClientList, ActionList, CompletedActionList, PlanedActionList
 
-admin.register(StaffList)
-admin.register(ClientList)
-admin.register(ActionList)
-admin.register(CompletedActionList)
-admin.register(PlanedTaskList)
+admin.site.register(StaffList)
+admin.site.register(ClientList)
+admin.site.register(ActionList)
+admin.site.register(CompletedActionList)
+admin.site.register(PlanedActionList)

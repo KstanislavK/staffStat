@@ -13,11 +13,13 @@
 <body>
 <div class="container container-flex">
     {% for item in staff %}
-        <div class="card">
-            <p>{{ item.photo }}</p>
-            <p>{{ item.name }}</p>
-            <p>{{ item.city }}</p>
-        </div>
+        <a href="{% url 'staffapp:staff_info' item.pk %}">
+            <div class="card">
+                <p>{{ item.photo }}</p>
+                <p>{{ item.name }}</p>
+                <p>{{ item.city }}</p>
+            </div>
+        </a>
     {% endfor %}
 </div>
 </body>
