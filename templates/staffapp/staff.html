@@ -1,81 +1,145 @@
+{% extends 'staffapp/base.html' %}
 {% load static %}
+{% block title %}Карточка менеджера: {{ staff.name }}{% endblock %}
+{% block content %}
 
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css">
-    <title>{{ title }}</title>
-</head>
-<body>
 <div>
-<p>Имя: {{ staff.name }}</p>
+<p>ФИО: {{ staff.name }}</p>
 <p>Должность: {{ staff.position }}</p>
 <p>В должности с: {{ staff.appointments_date }} </p>
+<p>Эффективные месяцы: {{ staff.effective_months }} </p>
+<p>Неэффективные месяцы: {{ staff.ineffective_months }} </p>
 
-    <h3>Список действий</h3>
-    <table>
-        <tr>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>План</th>
-            <th>KPI</th>
-        </tr>
-        {% for item in actions %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi.completed_amount }}</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi.plan_amount }}</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi.kpi|floatformat:0 }} %</td>
-            </tr>
-        {%  endfor %}
-    </table>
+
 </div>
-<div>
-    <h3>Список действий</h3>
-    <table>
-        <tr>
-            <th>Название</th>
-            <th>План</th>
-            <th>Текущий месяц</th>
-            <th>Прошлый месяц</th>
-        </tr>
-        {% for item in actions %}
+<div class="small-box container">
+<div class="card-wrap">
+    <p class="card-top">
+        <span class="card-header">Текущий месяц</span>
+        <span>KPI:
+            <span style="font-size:20px; font-weight: 700; color:{% if total_kpi_current_month < 60 %}red{% elif total_kpi_current_month <= 85 %}orange{% else %}green{% endif %};">
+                {{ total_kpi_current_month|floatformat:0 }} %
+            </span>
+        </span>
+        <span id="cur_kpi_btn" class="green-btn">
+            Подробнее
+        </span>
+    </p>
+        <hr class="card-hr">
+    <div class="card-wrap card-action" id="cur_actions">
+        <table class="table">
             <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi.plan_amount }}</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi.completed_amount }} ({{ item.get_number_of_completed_action_and_kpi.kpi|floatformat:0 }} %)</td>
-                <td>{{ item.get_number_of_completed_action_and_kpi_prev_month.completed_amount }} ({{ item.get_number_of_completed_action_and_kpi_prev_month.kpi|floatformat:0 }} %)</td>
+                <th class="cells">Действие</th>
+                <th class="cells">Выполнено</th>
+                <th class="cells">План</th>
+                <th class="cells">КПД</th>
             </tr>
-        {%  endfor %}
-            <tr>
-                <td colspan="2">KPI общее</td>
-                <td>{{ total_kpi_current_month|floatformat:0 }} %</td>
-                <td>{{ total_kpi_previous_month|floatformat:0 }} %</td>
-            </tr>
-    </table>
+            {% for item in actions %}
+                <tr>
+                    <td class="cells"><span class="table-str">{{ item.name }}</span></td>
+                    <td class="cells">{{ item.get_number_of_completed_action_and_kpi.completed_amount }}</td>
+                    <td class="cells">{{ item.amount }}</td>
+                    <td class="cells">{{ item.get_number_of_completed_action_and_kpi.kpi|floatformat:0 }} %</td>
+                </tr>
+            {%  endfor %}
+        </table>
+    </div>
 </div>
-<div>
-    <h3>Список клиентов</h3>
-    <table>
-        <tr>
-            <th>Имя</th>
-            <th>Телефон</th>
-            <th>Email</th>
-            <th>Адрес</th>
-        </tr>
-        {% for item in staff.get_clients %}
+    <div class="card-wrap">
+        <p class="card-top">
+            <span class="card-header">Предыдущий месяц</span>
+            <span>KPI:
+                <span style="font-size:20px; font-weight: 700; color:{% if total_kpi_previous_month < 60 %}red{% elif total_kpi_previous_month <= 85 %}orange{% else %}green{% endif %};">
+                    {{ total_kpi_previous_month|floatformat:0 }} %
+                </span>
+            </span>
+            <span id="pre_kpi_btn" class="green-btn">
+                Подробнее
+            </span>
+        </p>
+        <hr class="card-hr">
+        <div class="card-wrap card-action" id="pre_actions">
+        <table class="table">
             <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.phone_number }}</td>
-                <td>{{ item.email }}</td>
-                <td>{{ item.address }}</td>
+                <th class="cells"><span class="table-str"></span>Действие</th>
+                <th class="cells">Выполнено</th>
+                <th class="cells">План</th>
+                <th class="cells">КПД</th>
             </tr>
-        {%  endfor %}
-    </table>
+            {% for item in actions %}
+                <tr>
+                    <td class="cells"><span class="table-str">{{ item.name }}</span></td>
+                    <td class="cells">{{ item.get_number_of_completed_action_and_kpi_prev_month.completed_amount }}</td>
+                    <td class="cells">{{ item.amount }}</td>
+                    <td class="cells">{{ item.get_number_of_completed_action_and_kpi_prev_month.kpi|floatformat:0 }} %</td>
+                </tr>
+            {%  endfor %}
+        </table>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+<div class="card-wrap" style="width: 100%">
+    <div class="client-list-header">
+        <span class="card-header">Количество клиентов: {{ staff.get_clients.clients_amount }}</span>
+        <span id="client_list_btn" class="green-btn">
+            Показать список клиентов
+        </span>
+    </div>
+    <hr class="card-hr">
+    <div class="client-list container" id="client_list">
+
+        <table class="table">
+            <tr>
+                <th class="cells">Имя</th>
+                <th class="cells">Телефон</th>
+                <th class="cells">Email</th>
+                <th class="cells">Адрес</th>
+            </tr>
+            {% for item in staff.get_clients.clients %}
+                <tr>
+                    <td class="cells">{{ item.name }}</td>
+                    <td class="cells">{{ item.phone_number }}</td>
+                    <td class="cells">{{ item.email }}</td>
+                    <td class="cells">{{ item.address }}</td>
+                </tr>
+            {%  endfor %}
+        </table>
+    </div>
+</div>
+
+    <script>
+        $('#cur_kpi_btn').click(function() {
+            if ($('#cur_actions').is(':visible')) {
+                $('#cur_actions').hide('slow');
+                $(this).html('Подробнее')
+            }
+            else {
+                $('#cur_actions').show('slow');
+                $(this).html('Скрыть')
+            }
+        });
+
+        $('#pre_kpi_btn').click(function() {
+            if ($('#pre_actions').is(':visible')) {
+                $('#pre_actions').hide('slow');
+                $(this).html('Подробнее')
+            }
+            else {
+                $('#pre_actions').show('slow');
+                $(this).html('Скрыть')
+            }
+        });
+
+        $('#client_list_btn').click(function() {
+            if ($('#client_list').is(':visible')) {
+                $('#client_list').hide('slow');
+                $(this).html('Показать список клиентов')
+            }
+            else {
+                $('#client_list').show('slow');
+                $(this).html('Убрать список клиентов')
+            }
+        });
+    </script>
+
+{% endblock %}

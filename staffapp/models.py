@@ -7,13 +7,13 @@ from django.db.models import Sum
 
 class StaffList(models.Model):
     """Данные сотрудника"""
-    name = models.CharField(max_length=50)
-    # photo = models.FileField
-    city = models.CharField(max_length=30)
-    position = models.CharField(max_length=30)
-    appointments_date = models.DateField()
-    effective_months = models.IntegerField(default=0)
-    ineffective_months = models.IntegerField(default=0)
+    name = models.CharField(max_length=50, verbose_name='ФИО')
+    photo = models.ImageField(upload_to='images/', verbose_name='Фото')
+    city = models.CharField(max_length=30, verbose_name='Город')
+    position = models.CharField(max_length=30, verbose_name='Должность')
+    appointments_date = models.DateField(verbose_name='Дата назначения')
+    effective_months = models.IntegerField(default=0, verbose_name='Эффективные месяцы')
+    ineffective_months = models.IntegerField(default=0, verbose_name='Неэффективные месяцы')
 
     def __str__(self):
         return self.name
@@ -21,16 +21,21 @@ class StaffList(models.Model):
     def get_clients(self):
         """все клиенты менеджера"""
         clients = ClientList.objects.filter(manager=self.pk)
-        return clients
+        clients_amount = ClientList.objects.filter(manager=self.pk).aggregate(Sum('manager'))['manager__sum']
+        context = {
+            'clients': clients,
+            'clients_amount': clients_amount
+        }
+        return context
 
 
 class ClientList(models.Model):
     """Данные клиента"""
-    name = models.CharField(max_length=30)
-    manager = models.ForeignKey(StaffList, on_delete=models.PROTECT)
-    phone_number = models.CharField(max_length=11)
-    email = models.EmailField()
-    address = models.CharField(max_length=120)
+    name = models.CharField(max_length=30, verbose_name='ФИО')
+    manager = models.ForeignKey(StaffList, on_delete=models.PROTECT, verbose_name='ФИО менеджера', blank=True, null=True)
+    phone_number = models.CharField(max_length=15, verbose_name='Тел. номер', blank=True, null=True)
+    email = models.EmailField(verbose_name='Email', blank=True)
+    address = models.CharField(max_length=120, verbose_name='Адрес', blank=True)
 
     def __str__(self):
         return self.name
@@ -38,7 +43,7 @@ class ClientList(models.Model):
 
 class ActionList(models.Model):
     """Действия сотрудника"""
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, verbose_name='Название')
 
     def __str__(self):
         return self.name
@@ -46,10 +51,10 @@ class ActionList(models.Model):
 
 class CompletedActionList(models.Model):
     """Выполненные действия сотрудника"""
-    name = models.ForeignKey(ActionList, on_delete=models.PROTECT)
-    manager = models.ForeignKey(StaffList, on_delete=models.PROTECT)
-    client = models.ForeignKey(ClientList, on_delete=models.PROTECT)
-    date = models.DateTimeField()
+    name = models.ForeignKey(ActionList, on_delete=models.PROTECT, verbose_name='Название')
+    manager = models.ForeignKey(StaffList, on_delete=models.PROTECT, verbose_name='ФИО менеджера')
+    client = models.ForeignKey(ClientList, on_delete=models.PROTECT, verbose_name='ФИО клиента')
+    date = models.DateTimeField(verbose_name='Дата действия')
 
     def __str__(self):
         return self.name.name
@@ -57,9 +62,9 @@ class CompletedActionList(models.Model):
 
 class PlanedActionList(models.Model):
     """Установленный план на действия"""
-    name = models.ForeignKey(ActionList, on_delete=models.PROTECT)
-    staff = models.ForeignKey(StaffList, on_delete=models.PROTECT)
-    amount = models.PositiveIntegerField()
+    name = models.ForeignKey(ActionList, on_delete=models.PROTECT, verbose_name='Название')
+    staff = models.ForeignKey(StaffList, on_delete=models.PROTECT, verbose_name='ФИО менеджера')
+    amount = models.PositiveIntegerField(default=0, verbose_name='Количество')
 
     def __str__(self):
         return self.name.name

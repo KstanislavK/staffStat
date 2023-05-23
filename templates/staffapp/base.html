@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<section class="header container">
+    <img src="{% static 'img/logo.png' %}" alt="" width="50" height="50">
+    <a href="{% url 'staffapp:index' %}" class="green-btn btn-center">Главная</a>
+    <hr>
+</section>
+<section class="container content" style="padding-bottom: 90px;">
+    {%  block content %}{% endblock %}
+</section>
+<section class="footer">
+&copy; KSK 2023
+</section>
+</body>
+</html>
